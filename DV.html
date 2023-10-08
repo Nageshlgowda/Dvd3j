@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3.js CSV Visualization</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+
+    kkk
+    
+    <h1>CSV File Content:</h1>
+    <pre id="csvData1"></pre>
+
+    <h1>D3.js Bar Chart:</h1>
+    <svg width="1000" height="600" id="barChart"></svg>
+
+    <h1>D3.js Scatter Plot:</h1>
+    <svg width="1000" height="600" id="scatterPlot"></svg>
+
+
+    <script>
+        // Specify the URL or path to your CSV file  https://drive.google.com/file/d/1Xm7TsWTDIIjn_Xme1Ortf1fFXcL2YYOI/view?usp=sharing
+        // const csvFileURL = 'https://drive.google.com/uc?export=download&id=1Xm7TsWTDIIjn_Xme1Ortf1fFXcL2YYOI';
+        const csvFileURL = 'AB.csv';
+
+        // Fetch the CSV file
+        fetch(csvFileURL)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(csvData => {
+        // Display CSV data in the "csvData" pre element
+        document.getElementById("csvData1").textContent = csvData;
+
+        // Parse the CSV data and visualize it using D3.js
+        const data = d3.csvParse(csvData);
+
+        // Print the first line of the CSV data
+        const lines = csvData.split('\n');
+        if (lines.length > 0) {
+                        document.getElementById("csvData1").textContent = lines[0];
+                    } else {
+                        document.getElementById("csvData1").textContent = "CSV file is empty.";
+                    }
+
+        
+        visualizeData(csvData, "barChart");
+        visualizeData2(csvData, "scatterPlot");
+
+    })
+
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+            
+
+
+
+
+
+//////////////////////////////////////bar
+
+
+  function visualizeData(csvData, svgId) {
+            // Parse the CSV data
+            var data = d3.csvParse(csvData);
+
+            // Create scales for x and y axes
+            var xScale = d3.scaleBand()
+                .domain(data.map(function(d) { return d.City; }))
+                .range([0, 800])
+                .padding(0.1);
+
+            var yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d) { return +d.Price; })])
+                .range([400, 0]);
+
+            // Select the appropriate SVG element based on the svgId parameter
+            var svg = d3.select("#" + svgId);
+
+            // Create SVG elements for bars
+            svg.selectAll("rect")
+                .data(data)
+                .enter()
+                .append("rect")
+                .attr("x", function(d) { return xScale(d.City); })
+                .attr("y", function(d) { return yScale(+d.Price); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return 400 - yScale(+d.Price); })
+                .attr("fill", "steelblue");
+
+            // Add x-axis
+            svg.append("g")
+                .attr("transform", "translate(0,400)")
+                .call(d3.axisBottom(xScale));
+
+            // Add y-axis
+            svg.append("g")
+                .call(d3.axisLeft(yScale));
+        }
+
+
+////////////////////////////scatter plot
+            function visualizeData2(csvData, svgId) {
+            // Parse the CSV data
+            var data = d3.csvParse(csvData);
+
+            // Your D3.js code for visualization goes here
+            // Example: Creating a scatter plot of Price vs. Cleanliness Rating
+
+            // Define SVG dimensions and margins
+            var margin = { top: 20, right: 30, bottom: 40, left: 50 };
+            var width = 1000 - margin.left - margin.right;
+            var height = 600 - margin.top - margin.bottom;
+
+            // Create an SVG element
+            var svg = d3.select("#" + svgId)
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            // Define x and y scales
+            var xScale = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d) { return +d['Cleanliness Rating']; })])
+                .range([0, width]);
+
+            var yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, function(d) { return +d.Price; })])
+                .range([height, 0]);
+
+            // Create circles for scatter plot
+            svg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d) { return xScale(+d['Cleanliness Rating']); })
+                .attr("cy", function(d) { return yScale(+d.Price); })
+                .attr("r", 5) // Radius of circles
+                .attr("fill", "steelblue");
+
+            // Create x and y axes
+            var xAxis = d3.axisBottom(xScale);
+            var yAxis = d3.axisLeft(yScale);
+
+            svg.append("g")
+                .attr("class", "x-axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            svg.append("g")
+                .attr("class", "y-axis")
+                .call(yAxis);
+
+            // Add axis labels
+            svg.append("text")
+                .attr("class", "x-label")
+                .attr("text-anchor", "middle")
+                .attr("x", width / 2)
+                .attr("y", height + margin.bottom)
+                .text("Cleanliness Rating");
+
+            svg.append("text")
+                .attr("class", "y-label")
+                .attr("text-anchor", "middle")
+                .attr("x", -height / 2)
+                .attr("y", -margin.left)
+                .attr("dy", "1em")
+                .attr("transform", "rotate(-90)")
+                .text("Price");
+        }
+
+
+
+
+
+    </script>
+</body>
+</html>
