@@ -5,30 +5,41 @@
     <title>D3.js CSV Visualization</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
 </head>
+
+
+<style>
+#csvData1 {
+  white-space: pre-wrap;
+  width: 100%;
+  overflow: auto; /* Add this to enable scrolling if needed */
+}
+
+body {
+            background-color: #e0e0e0; /* Replace with your desired background color */
+        }
+
+</style>
+
 <body>
 
 
-    Hi this is my D3.j webpage on Github
+   
     
     <h1>CSV File Content:</h1>
     <pre id="csvData1"></pre>
 
-    <h1>D3.js Bar Chart:</h1>
-    <svg width="1000" height="600" id="barChart"></svg>
-
+    <h1>D3.js Bar Plot:</h1>
+    <svg width="1000" height="600" id="bar"></svg>
+    
     <h1>D3.js Scatter Plot:</h1>
     <svg width="1000" height="600" id="scatterPlot"></svg>
 
-    <h1>D3.js Scatter Plot:</h1>
-    <svg width="1000" height="600" id="lineChart"></svg>
-    <h1>D3.js Scatter Plot:</h1>
-    <svg width="1000" height="600" id="bar"></svg>
+
+   
  
 
 
     <script>
-        // Specify the URL or path to your CSV file  https://drive.google.com/file/d/1Xm7TsWTDIIjn_Xme1Ortf1fFXcL2YYOI/view?usp=sharing
-        // const csvFileURL = 'https://drive.google.com/uc?export=download&id=1Xm7TsWTDIIjn_Xme1Ortf1fFXcL2YYOI';
         const csvFileURL = 'AB.csv';
 
         // Fetch the CSV file
@@ -55,9 +66,9 @@
                     }
 
         
-        visualizeData(csvData, "barChart");
+       
         visualizeData2(csvData, "scatterPlot");
-        visualizeLineGraph(data, "lineChart");
+     
         bar(data, "bar")
 
     })
@@ -69,49 +80,6 @@
             
 
 
-
-
-
-//////////////////////////////////////bar
-
-
-  function visualizeData(csvData, svgId) {
-            // Parse the CSV data
-            var data = d3.csvParse(csvData);
-
-            // Create scales for x and y axes
-            var xScale = d3.scaleBand()
-                .domain(data.map(function(d) { return d.City; }))
-                .range([0, 800])
-                .padding(0.1);
-
-            var yScale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d) { return +d.Price; })])
-                .range([400, 0]);
-
-            // Select the appropriate SVG element based on the svgId parameter
-            var svg = d3.select("#" + svgId);
-
-            // Create SVG elements for bars
-            svg.selectAll("rect")
-                .data(data)
-                .enter()
-                .append("rect")
-                .attr("x", function(d) { return xScale(d.City); })
-                .attr("y", function(d) { return yScale(+d.Price); })
-                .attr("width", xScale.bandwidth())
-                .attr("height", function(d) { return 400 - yScale(+d.Price); })
-                .attr("fill", "steelblue");
-
-            // Add x-axis
-            svg.append("g")
-                .attr("transform", "translate(0,400)")
-                .call(d3.axisBottom(xScale));
-
-            // Add y-axis
-            svg.append("g")
-                .call(d3.axisLeft(yScale));
-        }
 
 
 ////////////////////////////scatter plot
@@ -191,87 +159,13 @@
 
 
 
-// Function to create the line graph
-function visualizeLineGraph(data, svgId) {
-    // Define the dimensions of the SVG and margins
-    const svgWidth = 800;
-    const svgHeight = 400;
-    const margin = { top: 20, right: 20, bottom: 30, left: 50 };
-    const width = svgWidth - margin.left - margin.right;
-    const height = svgHeight - margin.top - margin.bottom;
-
-    // Create an SVG element
-    const svg = d3.select(`#${svgId}`)
-        .attr("width", svgWidth)
-        .attr("height", svgHeight)
-        .append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // Convert data to numbers (assuming they are strings)
-    data.forEach(d => {
-        d["Guest Satisfaction"] = +d["Guest Satisfaction"];
-        d["Price"] = +d["Price"];
-    });
-
-
-
-    
-// Define x and y scales
-const xScale = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d["Guest Satisfaction"])]) // Assuming "Guest Satisfaction" is on the x-axis
-    .range([0, width]);
-
-const yScale = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d["Price"])]) // Assuming "Price" is on the y-axis
-    .range([height, 0]);
-
-// Create a line generator
-const line = d3.line()
-    .x(d => xScale(d["Guest Satisfaction"])) // X-axis corresponds to "Guest Satisfaction"
-    .y(d => yScale(d["Price"])); // Y-axis corresponds to "Price"
-
-// Append the line to the SVG
-svg.append("path")
-    .data([data])
-    .attr("class", "line")
-    .attr("d", line);
-
-
-
-// Add x-axis and label
-svg.append("g")
-    .attr("transform", `translate(0,${height})`)
-    .call(d3.axisBottom(xScale));
-
-svg.append("text")
-    .attr("class", "x-label")
-    .attr("text-anchor", "middle")
-    .attr("x", width / 2)
-    .attr("y", height + margin.bottom - 5) // Adjust the position as needed
-    .text("Price");
-
-// Add y-axis and label
-svg.append("g")
-    .call(d3.axisLeft(yScale));
-
-svg.append("text")
-    .attr("class", "y-label")
-    .attr("text-anchor", "middle")
-    .attr("x", -height / 2)
-    .attr("y", -margin.left + 10) // Adjust the position as needed
-    .attr("dy", "1em")
-    .attr("transform", "rotate(-90)")
-    .text("Rating");
-
-}
-
 
 //////////////////////////////////////////////
 function bar(data, svgId) {
 // Create a SVG container
             const svgWidth = 800;
-            const svgHeight = 400;
-            const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+            const svgHeight = 500;
+            const margin = { top: 20, right: 50, bottom: 50, left: 40 };
             const width = svgWidth - margin.left - margin.right;
             const height = svgHeight - margin.top - margin.bottom;
 
@@ -302,7 +196,8 @@ function bar(data, svgId) {
                 .attr("x", d => xScale(d.City))
                 .attr("y", d => yScale(+d.Price))
                 .attr("width", xScale.bandwidth())
-                .attr("height", d => height - yScale(+d.Price));
+                .attr("height", d => height - yScale(+d.Price))
+                .attr("fill", "steelblue");
 
             // Add x-axis
             svg.append("g")
