@@ -1,0 +1,11 @@
+
+#csvData1 {
+  white-space: pre-wrap;
+  width: 100%;
+  overflow: auto; /* Add this to enable scrolling if needed */
+}
+
+body {
+            background-color: #f1f0f0; /* Replace with your desired background color */
+        }
+
