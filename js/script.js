@@ -4,56 +4,52 @@ const csvFileURL = 'data/Airbnb Cleaned Europe Dataset.csv';
 
 // Fetch the CSV file
 fetch(csvFileURL)
-.then(response => {
-if (!response.ok) {
-    throw new Error('Network response was not ok');
-}
-return response.text();
-})
-.then(csvData => {
-// Display CSV data in the "csvData" pre element
-document.getElementById("csvData1").textContent = csvData;
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(csvData => {
+        // Display CSV data in the "csvData" pre element
+        document.getElementById("csvData1").textContent = csvData;
 
-// Parse the CSV data and visualize it using D3.js
-const data = d3.csvParse(csvData);
-
-// Print the first line of the CSV data
-const lines = csvData.split('\n');
-if (lines.length > 0) {
-                document.getElementById("csvData1").textContent = lines[0];
-            } else {
-                document.getElementById("csvData1").textContent = "CSV file is empty.";
-            }
+        // Parse the CSV data and visualize it using D3.js
+        const data = d3.csvParse(csvData);
+        
 
 
-
-visualizeData2(csvData, "scatterPlot");
-
-bar(data, "bar")
-
-})
-
-.catch(error => {
-console.error('Error:', error);
-});
-
-    
+        // Print the first line of the CSV data
+        const lines = csvData.split('\n');
+        if (lines.length > 0) {
+            document.getElementById("csvData1").textContent = lines[0];
+        } else {
+            document.getElementById("csvData1").textContent = "CSV file is empty.";
+        }
 
 
+
+        visualizeData2(csvData, "scatterPlot");
+
+        bar(data, "bar")
+
+    })
+
+    .catch(error => {
+        console.error('Error:', error);
+    });
 
 
 ////////////////////////////scatter plot
-    function visualizeData2(csvData, svgId) {
+function visualizeData2(csvData, svgId) {
     // Parse the CSV data
     var data = d3.csvParse(csvData);
 
-    // Your D3.js code for visualization goes here
-    // Example: Creating a scatter plot of Price vs. Cleanliness Rating
 
     // Define SVG dimensions and margins
     var margin = { top: 20, right: 30, bottom: 40, left: 50 };
-    var width = 1000 - margin.left - margin.right;
-    var height = 600 - margin.top - margin.bottom;
+    var width = 800 - margin.left - margin.right;
+    var height = 500 - margin.top - margin.bottom;
 
     // Create an SVG element
     var svg = d3.select("#" + svgId)
@@ -64,11 +60,11 @@ console.error('Error:', error);
 
     // Define x and y scales
     var xScale = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) { return +d['Cleanliness Rating']; })])
+        .domain([0, d3.max(data, function (d) { return +d['Cleanliness Rating']; })])
         .range([0, width]);
 
     var yScale = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) { return +d.Price; })])
+        .domain([0, d3.max(data, function (d) { return +d.Price; })])
         .range([height, 0]);
 
 
@@ -79,8 +75,8 @@ console.error('Error:', error);
         .data(data)
         .enter()
         .append("circle")
-        .attr("cx", function(d) { return xScale(+d['Cleanliness Rating']); })
-        .attr("cy", function(d) { return yScale(+d.Price); })
+        .attr("cx", function (d) { return xScale(+d['Cleanliness Rating']); })
+        .attr("cy", function (d) { return yScale(+d.Price); })
         .attr("r", 5) // Radius of circles
         .attr("fill", "steelblue");
 
@@ -119,7 +115,7 @@ console.error('Error:', error);
 
 //////////////////////////////////////////////
 function bar(data, svgId) {
-// Create a SVG container
+    // Create a SVG container
     const svgWidth = 800;
     const svgHeight = 500;
     const margin = { top: 20, right: 50, bottom: 50, left: 40 };
