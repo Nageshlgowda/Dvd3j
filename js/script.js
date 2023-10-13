@@ -29,9 +29,9 @@ fetch(csvFileURL)
 
 
 
-        visualizeData2(csvData, "scatterPlot");
+        visualizeScatter(csvData, "scatterPlot");
 
-        bar(data, "bar")
+        visualizeBar(data, "bar")
 
     })
 
@@ -41,7 +41,7 @@ fetch(csvFileURL)
 
 
 ////////////////////////////scatter plot
-function visualizeData2(csvData, svgId) {
+function visualizeScatter(csvData, svgId) {
     // Parse the CSV data
     var data = d3.csvParse(csvData);
 
@@ -114,7 +114,7 @@ function visualizeData2(csvData, svgId) {
 
 
 //////////////////////////////////////////////
-function bar(data, svgId) {
+function visualizeBar(data, svgId) {
     // Create a SVG container
     const svgWidth = 800;
     const svgHeight = 500;
@@ -157,7 +157,6 @@ function bar(data, svgId) {
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(xScale))
         .selectAll("text")
-        .attr("transform", "rotate(-45)")
         .style("text-anchor", "end");
 
     // Add y-axis
@@ -168,7 +167,7 @@ function bar(data, svgId) {
     svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", -margin.left)
-        .attr("x", -height / 2)
+        .attr("x", -height / 2 )
         .attr("dy", "1em")
         .style("text-anchor", "middle")
         .text("Price");
