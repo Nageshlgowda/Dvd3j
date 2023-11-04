@@ -136,7 +136,7 @@ function visualizeBar(data, svgId) {
         .padding(0.1);
 
     const yScale = d3.scaleLinear()
-        .domain([0, d3.max(data, d => +d.Price)])
+         .range([height, 0])
         .nice()
         .range([height, 0]);
 
