@@ -114,13 +114,18 @@ function visualizeScatter(csvData, svgId) {
 
 
 //////////////////////////////////////////////
+//////////////////////////////////////////////
 function visualizeBar(data, svgId) {
-    // Create a SVG container
+    // Create an SVG container
     const svgWidth = 800;
     const svgHeight = 500;
     const margin = { top: 20, right: 50, bottom: 50, left: 40 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgHeight - margin.top - margin.bottom;
+
+    // Calculate the minimum and maximum prices in the data
+    const minPrice = d3.min(data, d => +d.Price);
+    const maxPrice = d3.max(data, d => +d.Price);
 
     const svg = d3.select(`#${svgId}`)
         .append("svg")
@@ -129,31 +134,28 @@ function visualizeBar(data, svgId) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    // Define x and y scales
     const xScale = d3.scaleBand()
-    .domain(data.map(d => d.City))
-    .range([0, width])
-    .padding(0.1);
+        .domain(data.map(d => d.City))
+        .range([0, width])
+        .padding(0.1);
 
-const yScale = d3.scaleLinear()
-    .range([height, 0])
-    .nice();
+    const yScale = d3.scaleLinear()
+        .domain([minPrice, maxPrice])
+        .nice()
+        .range([height, 0]);
 
     // Create bars
-// Calculate the starting range value
-const rangeStart = 50; // You can set this value to the desired starting range
-
-// Create bars
-svg.selectAll(".bar")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    .attr("x", d => xScale(d.City))
-    .attr("y", d => yScale(rangeStart)) // Set the starting range value
-    .attr("width", xScale.bandwidth())
-    .attr("height", d => height - yScale(rangeStart) - (height - yScale(+d.Price))) // Calculate the height based on range
-    .attr("fill", "steelblue");
-
+    svg.selectAll(".bar")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("class", "bar")
+        .attr("x", d => xScale(d.City))
+        .attr("y", d => yScale(+d.Price))
+        .attr("width", xScale.bandwidth())
+        .attr("height", d => height - yScale(+d.Price))
+        .attr("fill", "steelblue");
 
     // Add x-axis
     svg.append("g")
@@ -170,10 +172,8 @@ svg.selectAll(".bar")
     svg.append("text")
         .attr("transform", "rotate(-90)")
         .attr("y", -margin.left)
-        .attr("x", -height / 2 )
+        .attr("x", -height / 2)
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Price");
-
+        .text("Price Range");
 }
-
