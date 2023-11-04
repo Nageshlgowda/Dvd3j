@@ -116,16 +116,12 @@ function visualizeScatter(csvData, svgId) {
 //////////////////////////////////////////////
 //////////////////////////////////////////////
 function visualizeBar(data, svgId) {
-    // Create an SVG container
+    // Create a SVG container
     const svgWidth = 800;
     const svgHeight = 500;
     const margin = { top: 20, right: 50, bottom: 50, left: 40 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgHeight - margin.top - margin.bottom;
-
-    // Calculate the minimum and maximum prices in the data
-    const minPrice = d3.min(data, d => +d.Price);
-    const maxPrice = d3.max(data, d => +d.Price);
 
     const svg = d3.select(`#${svgId}`)
         .append("svg")
@@ -134,27 +130,33 @@ function visualizeBar(data, svgId) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    // Group the data by City and count the occurrences of each City
+    const groupedData = d3.rollup(data, v => v.length, d => d.City);
+
+    // Extract the City names and their corresponding counts
+    const cityCounts = Array.from(groupedData, ([City, count]) => ({ City, count }));
+
     // Define x and y scales
     const xScale = d3.scaleBand()
-        .domain(data.map(d => d.City))
+        .domain(cityCounts.map(d => d.City))
         .range([0, width])
         .padding(0.1);
 
     const yScale = d3.scaleLinear()
-        .domain([minPrice, maxPrice])
+        .domain([0, d3.max(cityCounts, d => d.count)])
         .nice()
         .range([height, 0]);
 
     // Create bars
     svg.selectAll(".bar")
-        .data(data)
+        .data(cityCounts)
         .enter()
         .append("rect")
         .attr("class", "bar")
         .attr("x", d => xScale(d.City))
-        .attr("y", d => yScale(+d.Price))
+        .attr("y", d => yScale(d.count))
         .attr("width", xScale.bandwidth())
-        .attr("height", d => height - yScale(+d.Price))
+        .attr("height", d => height - yScale(d.count))
         .attr("fill", "steelblue");
 
     // Add x-axis
@@ -175,5 +177,6 @@ function visualizeBar(data, svgId) {
         .attr("x", -height / 2)
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Price Range");
+        .text("Count of Price");
 }
+
