@@ -129,28 +129,31 @@ function visualizeBar(data, svgId) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Define x and y scales
     const xScale = d3.scaleBand()
-        .domain(data.map(d => d.City))
-        .range([0, width])
-        .padding(0.1);
+    .domain(data.map(d => d.City))
+    .range([0, width])
+    .padding(0.1);
 
-    const yScale = d3.scaleLinear()
-         .range([height, 0])
-        .nice()
-        .range([height, 0]);
+const yScale = d3.scaleLinear()
+    .range([height, 0])
+    .nice();
 
     // Create bars
-    svg.selectAll(".bar")
-        .data(data)
-        .enter()
-        .append("rect")
-        .attr("class", "bar")
-        .attr("x", d => xScale(d.City))
-        .attr("y", d => yScale(+d.Price))
-        .attr("width", xScale.bandwidth())
-        .attr("height", d => height - yScale(+d.Price))
-        .attr("fill", "steelblue");
+// Calculate the starting range value
+const rangeStart = 50; // You can set this value to the desired starting range
+
+// Create bars
+svg.selectAll(".bar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("class", "bar")
+    .attr("x", d => xScale(d.City))
+    .attr("y", d => yScale(rangeStart)) // Set the starting range value
+    .attr("width", xScale.bandwidth())
+    .attr("height", d => height - yScale(rangeStart) - (height - yScale(+d.Price))) // Calculate the height based on range
+    .attr("fill", "steelblue");
+
 
     // Add x-axis
     svg.append("g")
