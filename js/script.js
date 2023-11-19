@@ -135,7 +135,7 @@ function visualizeScatter(csvData, svgId) {
     // Set up SVG dimensions
     const svgWidth = 800;
     const svgHeight = 500;
-    const margin = { top: 20, right: 80, bottom: 50, left: 50 };
+    const margin = { top: 20, right: 120, bottom: 50, left: 50 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgHeight - margin.top - margin.bottom;
 
