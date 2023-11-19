@@ -1,5 +1,4 @@
 
-
 const csvFileURL = 'data/Airbnb Cleaned Europe Dataset.csv';
 
 // Fetch the CSV file
@@ -108,6 +107,7 @@ function visualizeBar(data, svgId) {
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(xScale))
         .selectAll("text")
+        .style("font-size", "11px")
         .style("text-anchor", "end");
 
     // Add y-axis
@@ -127,13 +127,12 @@ function visualizeBar(data, svgId) {
 }
 
 
-
 function visualizeScatter(csvData, svgId) {
     // Parse the CSV data
     const data = d3.csvParse(csvData);
 
     // Set up SVG dimensions
-    const svgWidth = 800;
+    const svgWidth = 900;
     const svgHeight = 500;
     const margin = { top: 20, right: 120, bottom: 50, left: 50 };
     const width = svgWidth - margin.left - margin.right;
@@ -147,10 +146,13 @@ function visualizeScatter(csvData, svgId) {
         .append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
+
     // Group data by City
     const cities = d3.nest()
         .key(d => d.City)
         .entries(data);
+
+
 
     // Define x scale
     const xScale = d3.scaleBand()
@@ -164,8 +166,11 @@ function visualizeScatter(csvData, svgId) {
         .nice()
         .range([height, 0]);
 
-    // Define color scale
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    // Define custom colors
+    const customColors = ["#1f78b4", "#33a02c", "#ea595a", "#ff7f00", "#6a3d9a", "#a6cee3", "#b2df8a", "#fb9a99", "#fdbf6f", "#cab2d6"];
+
+    // Create a color scale using the custom colors
+    const colorScale = d3.scaleOrdinal().range(customColors);
 
     // Create circles for the scatter plot
     svg.selectAll(".circle-group")
@@ -213,8 +218,9 @@ function visualizeScatter(csvData, svgId) {
         .selectAll("text")
         .style("text-anchor", "end")
         .attr("dx", "-.8em")
-        .attr("dy", ".15em")
-        .attr("transform", "rotate(-45)");
+        .attr("dy", "1em")
+        .style("font-size", "11px")
+        .attr("transform");
 
     // Add y-axis
     svg.append("g")
@@ -234,7 +240,7 @@ function visualizeScatter(csvData, svgId) {
         .attr("y", -margin.left)
         .attr("dy", "1em")
         .style("text-anchor", "middle")
-        .text("Satisfaction");
+        .text("Guest Satisfaction");
 }
 
 
